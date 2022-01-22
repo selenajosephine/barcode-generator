@@ -16,7 +16,7 @@ export const App = () => {
         {isConfigs ? <Configs setConfigs={setConfigs} /> : (
           <>
             <div className="p-3 blue-font" onClick={handleClick}>
-              {localStorage.getItem('sels-barcode-sequence') ? 'Update Defaults' : 'Set Defaults'}
+              {localStorage.getItem('sels-barcode') ? 'Update Defaults' : 'Set Defaults'}
             </div>
             <GenerateBarcode />
           </>

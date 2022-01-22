@@ -6,13 +6,13 @@ import FileSaver from 'file-saver';
 const zip = new JSZip();
 
 export const GenerateBarcode = () => {
-
-    const [serialInitial, setSerialInitial] = useState(+localStorage.getItem('sels-barcode-init-value') || 1);
-    const [serialFinal, setSerialFinal] = useState((+localStorage.getItem(('sels-barcode-init-value') || 1) + 19) || 19);
+    const configs = JSON.parse(localStorage.getItem("sels-barcode"));
+    const [serialInitial, setSerialInitial] = useState(configs?.serialNumber || 1);
+    const [serialFinal, setSerialFinal] = useState(+(configs?.serialNumber || 1) + +19);
     const [copyCount, setCopyCount] = useState(1);
     const [finalArray, setArrayCount] = useState(Array(20).fill("**"));
     const [isDownload, setDownload] = useState(false)
-    const [sequence] = useState(localStorage.getItem("sels-barcode-sequence"));
+    const [sequence] = useState(configs?.sequence || "000000000");
 
     const handleChange = (e) => {
         const { value, name } = e.target;
@@ -41,14 +41,13 @@ export const GenerateBarcode = () => {
     }
 
     const handleGenerate = () => {
-        localStorage.setItem('sels-barcode-init-value', serialInitial);
-        const seq = localStorage.getItem('sels-barcode-sequence') || "0-0-0"
+        const seq = sequence;
         setDownload(true);
         const count = serialFinal - serialInitial + 1;
         // var number = String(seq) + serialInitial;
         for (let i = 0; i <= count; i++) {
             const barcode = `#barcode_${i}`;
-            const number = String(seq) + (serialInitial + i);
+            const number = configs?.model + configs?.year + parseInt(+serialInitial + i, 10) + configs?.month + configs?.productHead
             JsBarcode(barcode,
                 number, {
                 text: number,
@@ -60,7 +59,8 @@ export const GenerateBarcode = () => {
     }
 
     const handleDownload = () => {
-        localStorage.setItem('sels-barcode-init-value', serialFinal + 1);
+        const con = { ...configs, serialNumber: serialFinal + 1 }
+        localStorage.setItem('sels-barcode', JSON.stringify(con));
         finalArray.forEach((val, index) => {
             const element = document.getElementById(`barcode_${index}`);
             if (element) {
