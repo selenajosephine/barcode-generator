@@ -1,31 +1,33 @@
-import './App.css';
-import { Header, Footer, GenerateBarcode, Configs } from './components';
 import { useState } from 'react';
+import './App.css';
+import { Header, Footer, LoginComponent, Configs } from './components';
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { checkEligibility } from './utils/UserUtils';
 
 export const App = () => {
 
-  const [isConfigs, setConfigs] = useState(false)
+  const [user, setUser] = useState();
 
-  const handleClick = () => setConfigs(true)
+  if (!user) {
+    return (
+      <div className="d-flex flex-column min-vh-100">
+        <Header />
+        <LoginComponent setUser={setUser} />
+        <Footer />
+      </div>
+    );
+  }
+
 
   return (
     <div className="d-flex flex-column min-vh-100">
       <Header />
-
-      <div>
-        {isConfigs ? <Configs setConfigs={setConfigs} /> : (
-          <>
-            <div className="p-3 blue-font" onClick={handleClick}>
-              {localStorage.getItem('sels-barcode') ? 'Update Defaults' : 'Set Defaults'}
-            </div>
-            <GenerateBarcode />
-          </>
-        )
-        }
-      </div>
-      <footer className="mt-auto">
-        <Footer />
-      </footer>
+      <BrowserRouter>
+        <Routes>
+          <Route exact path='/' element={<Configs />} key={1} id={1} allowedUsers={['admin']} isUserAllowed={checkEligibility(user, 'admin')} />
+        </Routes>
+      </BrowserRouter>
+      <Footer />
     </div>
   );
 }

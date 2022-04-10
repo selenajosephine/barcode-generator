@@ -2,3 +2,4 @@
 .row{ font-size: 12px;}
 .font-30-px{ font-size: 30px;}
 .blue-font{ color: rgb(43, 87, 154);}
+.login-wrapper { display: flex; flex-direction: column; align-items: center;}
