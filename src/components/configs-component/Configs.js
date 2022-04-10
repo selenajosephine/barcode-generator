@@ -1,19 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { saveConfiguration, getConfigurationService } from '../../services/ConfigurationService';
 
 export const Configs = ({ setConfigs }) => {
-    const configs = JSON.parse(localStorage.getItem("sels-barcode"));
-    const [price, setPrice] = useState(configs?.price || 1);
-    const [serialNumber, setSerialNumber] = useState(configs?.serialNumber || '100001');
-    const [model, setModel] = useState(configs?.model || 'M01');
-    const [year, setYear] = useState(configs?.year || '22');
-    const [month, setMonth] = useState(configs?.month || '01');
-    const [productHead, setProductHead] = useState(configs?.productHead || 'A');
+
+    const [batch, setBatch] = useState('A01');
+    const [serialNumber, setSerialNumber] = useState('100001');
+    const [model, setModel] = useState('M01');
+    const [year, setYear] = useState('22');
+    const [month, setMonth] = useState('01');
+    const [copies, setCopies] = useState(1);
+    const [sequence, setSequence] = useState('');
+    const [errorMessage, setErrorMessage] = useState([]);
+
+    useEffect(async () => {
+        const response = await getConfigurationService();
+        if (response.status === 'OK') {
+            mapConfigs(response.data);
+        } else {
+            errorMessage.push("Something went wrong. Try creating new configurations.");
+        }
+    }, []);
+
+    const mapConfigs = (configs) => {
+        setBatch(configs.batch);
+        setYear(configs.year);
+        setMonth(configs.month);
+        setSerialNumber(configs.serialNumber);
+        setSequence(configs.serialNumber);
+        setCopies(configs.copies);
+        setModel(configs.modelName);
+    }
 
     const handleChange = (e) => {
         const { value, name } = e.target;
         switch (name) {
-            case "price":
-                setPrice(value);
+            case "batch":
+                setBatch(value);
                 break;
             case "model-number":
                 setModel(value);
@@ -27,36 +49,48 @@ export const Configs = ({ setConfigs }) => {
             case "month":
                 setMonth(value);
                 break;
-            case "product-head":
-                setProductHead(value);
+            case "copies":
+                setCopies(value);
                 break;
             default:
                 break;
         }
     }
 
-    const handleSaveDefaults = () => {
-        const configs = {
-            price, 
-            model,
+    const handleSaveDefaults = async () => {
+        const response = await saveConfiguration({
+            modelName: model,
             serialNumber,
-            year, 
-            month, 
-            productHead,
-            sequence: [model, year, serialNumber, month, productHead].join(""),
+            year,
+            month,
+            batch,
+            copies,
+            sequence: [model, year, serialNumber, month].join("")
+        });
+        if (response.status !== 'OK') {
+            const error = ["Error saving configs"]
+            setErrorMessage(error)
         }
-        localStorage.setItem("sels-barcode", JSON.stringify(configs));
-        setConfigs(false);
     }
 
     return (
         <>
+            <div className="d-flex justify-content-center mt-3">
+                <h3>Please Update your barcode configurations</h3>
+            </div>
+            {errorMessage.length > 0 && (
+                <div className="d-flex justify-content-center mt-5">
+                    <div className="border border-danger px-3">
+                        <h6 className="text-danger">{errorMessage} </h6>
+                    </div>
+                </div>
+            )}
             <div className="p-3 w-100 row">
                 <div className="col">
-                    Price
+                    Batch
             </div>
                 <div className="col">
-                    <input value={price} name="price" onChange={handleChange} type="text" id="price" />
+                    <input value={batch} name="batch" onChange={handleChange} type="text" id="batch" />
                 </div>
                 <div className="w-100"></div>
                 <br />
@@ -96,16 +130,14 @@ export const Configs = ({ setConfigs }) => {
                 </div>
                 <div className="w-100"></div>
                 <br />
-
                 <div className="col">
-                    Product Head
+                    Copies
                 </div>
                 <div className="col">
-                    <input value={productHead} name="product-head" onChange={handleChange} type="text" id="product-head" />
+                    <input value={copies} name="copies" onChange={handleChange} type="text" id="copies" />
                 </div>
                 <div className="w-100"></div>
                 <br />
-
             </div>
             <div className="p-3 justify-content-center d-flex">
                 <button className="blue-background text-white p-2" onClick={handleSaveDefaults}>Save</button>
@@ -113,3 +145,5 @@ export const Configs = ({ setConfigs }) => {
         </>
     )
 }
+
+

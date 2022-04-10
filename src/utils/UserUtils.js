@@ -7,5 +7,9 @@ export const checkEligibility = (user, allowedUsers) => {
     return !!0;
 };
 
+const USER_CONSTANT = "user-data";
+
 export const updateSession = (userData)=> 
-    sessionStorage.setItem("user-data", JSON.stringify(userData));
+    sessionStorage.setItem(USER_CONSTANT, JSON.stringify(userData));
+export const getToken = () =>
+    `${JSON.parse(sessionStorage.getItem(USER_CONSTANT))?.tokenType} ${JSON.parse(sessionStorage.getItem(USER_CONSTANT))?.accessToken}`;
