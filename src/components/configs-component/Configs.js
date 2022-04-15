@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'
 import { saveConfiguration, getConfigurationService } from '../../services/ConfigurationService';
 
-export const Configs = ({ setConfigs }) => {
-
+export const Configs = ({ isUserAllowed }) => {
+    console.log('isUserAllowed', isUserAllowed);
     const [batch, setBatch] = useState('A01');
     const [serialNumber, setSerialNumber] = useState('100001');
     const [model, setModel] = useState('M01');
@@ -11,13 +12,18 @@ export const Configs = ({ setConfigs }) => {
     const [copies, setCopies] = useState(1);
     const [sequence, setSequence] = useState('');
     const [errorMessage, setErrorMessage] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(async () => {
-        const response = await getConfigurationService();
-        if (response.status === 'OK') {
-            mapConfigs(response.data);
+        if (isUserAllowed) {
+            const response = await getConfigurationService();
+            if (response.status === 'OK') {
+                mapConfigs(response.data);
+            } else {
+                errorMessage.push("Something went wrong. Try creating new configurations.");
+            }
         } else {
-            errorMessage.push("Something went wrong. Try creating new configurations.");
+            navigate("/")
         }
     }, []);
 

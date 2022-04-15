@@ -1,18 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import JsBarcode from 'jsbarcode';
 import JSZip from 'jszip';
 import FileSaver from 'file-saver';
+import { getConfigurationService } from '../../services/ConfigurationService';
+import { useNavigate } from 'react-router-dom';
 
 const zip = new JSZip();
 
-export const GenerateBarcode = () => {
-    const configs = JSON.parse(localStorage.getItem("sels-barcode"));
-    const [serialInitial, setSerialInitial] = useState(configs?.serialNumber || 1);
-    const [serialFinal, setSerialFinal] = useState(+(configs?.serialNumber || 1) + +19);
+export const GenerateBarcode = ({ isUserAllowed }) => {
+    const [configs, setConfigs] = useState({});
+    const [serialInitial, setSerialInitial] = useState();
+    const [serialFinal, setSerialFinal] = useState();
     const [copyCount, setCopyCount] = useState(1);
     const [finalArray, setArrayCount] = useState(Array(20).fill("**"));
-    const [isDownload, setDownload] = useState(false)
-    const [sequence] = useState(configs?.sequence || "000000000");
+    const [isDownload, setDownload] = useState(false);
+    const [sequence, setSequence] = useState("000000000");
+    // const [serialInitial, setSerialInitial] = useState(configs?.serialNumber || 1);
+    // const [serialFinal, setSerialFinal] = useState(+(configs?.serialNumber || 1) + +19);
+    // const [copyCount, setCopyCount] = useState(1);
+    // const [finalArray, setArrayCount] = useState(Array(20).fill("**"));
+    // const [isDownload, setDownload] = useState(false)
+    const [errorMessage, setErrorMessage] = useState([]);
+    const navigate = useNavigate();
+
+    const mapConfigs = (configs) => {
+        setConfigs(configs);
+        setSerialInitial(configs.serialNumber);
+        setSerialFinal(+configs.serialNumber + 19);
+        // setBatch(configs.batch);
+        // setCopies(configs.copies);
+        // setModel(configs.modelName);
+        // setMonth(configs.month);
+        // setYear(configs.year);
+        // setSerialInitial(configs.serialNumber);
+        setSequence(configs.sequence);
+    }
+
+    useEffect(async () => {
+        if (isUserAllowed) {
+            const response = await getConfigurationService();
+            if (response.status === 'OK') {
+                mapConfigs(response.data);
+            } else {
+                const error = ["Error retrieving configs"]
+                setErrorMessage(error)
+            }
+        } else {
+            navigate("/")
+        }
+    }, []);
 
     const handleChange = (e) => {
         const { value, name } = e.target;
@@ -76,6 +112,16 @@ export const GenerateBarcode = () => {
 
     return (
         <>
+            <div className="d-flex justify-content-center mt-3">
+                <h3>Generate barcode here</h3>
+            </div>
+            {errorMessage.length > 0 && (
+                <div className="d-flex justify-content-center mt-5">
+                    <div className="border border-danger px-3">
+                        <h6 className="text-danger">{errorMessage} </h6>
+                    </div>
+                </div>
+            )}
             <div className="p-3 blue-font">Current Sequence is {sequence}</div>
             <div className="p-3 w-100 row">
                 <div className="col">
