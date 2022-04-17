@@ -19,15 +19,16 @@ export const App = () => {
       </div>
     );
   }
-
+console.log(user);
   return (
     <div className="d-flex flex-column min-vh-100">
       <Header />
       <BrowserRouter>
         <Routes>
-          <Route exact path='/' element={<LandingPage user={user} />} key={1} id={1}/>
-          <Route exact path='/configs' element={<Configs isUserAllowed={checkEligibility(user.roles, 'admin')} />} key={2} id={2}  />
-          <Route exact path='/generate' element={<GenerateBarcode isUserAllowed={checkEligibility(user.roles, 'admin')} />} key={2} id={2}  />
+          <Route exact path='/' element={<LandingPage user={user} />} key={1} id={1} />
+          <Route exact path='/configs' element={<Configs isUserAllowed={checkEligibility(user.roles, 'admin')} />} key={2} id={2} />
+          <Route exact path='/generate' element={<GenerateBarcode isUserAllowed={checkEligibility(user.roles, 'admin')} />} key={2} id={2} />
+          <Route exact path='/moderate/generate' element={<GenerateBarcode isUserAllowed={checkEligibility(user.roles, 'moderator')} />} key={2} id={2} />
         </Routes>
       </BrowserRouter>
       <Footer />

@@ -12,7 +12,8 @@ export const LoginComponent = ({ setUser }) => {
         const response = await loginUser({ username, password });
         if (response.status === 'OK') {
             setUser(response.data.data);
-            updateSession(response.data.data)
+            updateSession(response.data.data);
+            window.location.reload()
         }
         else {
             setErrorMessage(response.error);

@@ -14,6 +14,13 @@ const pageOptions = [
         route: 'generate',
         allowedFor: ['ROLE_ADMIN'],
         label: 'Generate Barcode'
+    },
+    {
+        id: 'barcode_generator_mod_page',
+        key: 2,
+        route: 'moderate/generate',
+        allowedFor: ['ROLE_MODERATOR'],
+        label: 'Generate Barcode'
     }
 ];
 

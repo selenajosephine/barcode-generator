@@ -15,4 +15,10 @@ export const getToken = () =>
     `${JSON.parse(sessionStorage.getItem(USER_CONSTANT))?.tokenType} ${JSON.parse(sessionStorage.getItem(USER_CONSTANT))?.accessToken}`;
 
 export const getUserInSession = () =>
-    JSON.parse(sessionStorage.getItem(USER_CONSTANT))
+    JSON.parse(sessionStorage.getItem(USER_CONSTANT)) || false;
+
+export const logoutUser = () =>
+    sessionStorage.removeItem(USER_CONSTANT);
+
+export const isUserLoggedIn = () => 
+    sessionStorage.getItem(USER_CONSTANT) ? true : false

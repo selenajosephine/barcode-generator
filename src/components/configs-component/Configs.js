@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { saveConfiguration, getConfigurationService } from '../../services/ConfigurationService';
 
 export const Configs = ({ isUserAllowed }) => {
-    console.log('isUserAllowed', isUserAllowed);
     const [batch, setBatch] = useState('A01');
     const [serialNumber, setSerialNumber] = useState('100001');
     const [model, setModel] = useState('M01');
