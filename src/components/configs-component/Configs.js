@@ -9,8 +9,10 @@ export const Configs = ({ isUserAllowed }) => {
     const [year, setYear] = useState('22');
     const [month, setMonth] = useState('01');
     const [copies, setCopies] = useState(1);
-    const [sequence, setSequence] = useState('');
     const [errorMessage, setErrorMessage] = useState([]);
+    const [options] = useState([
+        "select", "modelName", "serialNumber", "year", "month", "batch"
+    ])
     const navigate = useNavigate();
 
     useEffect(async () => {
@@ -31,9 +33,14 @@ export const Configs = ({ isUserAllowed }) => {
         setYear(configs.year);
         setMonth(configs.month);
         setSerialNumber(configs.serialNumber);
-        setSequence(configs.serialNumber);
         setCopies(configs.copies);
         setModel(configs.modelName);
+        if (configs.sequence) {
+            const seq = configs.sequence.split("-");
+            for (let i = 0; i < seq.length; i++) {
+                document.getElementById(`sequence_${(i+1)}`).value = seq[i]
+            }
+        }
     }
 
     const handleChange = (e) => {
@@ -62,6 +69,15 @@ export const Configs = ({ isUserAllowed }) => {
         }
     }
 
+    const generateSequence = () => {
+        const sequence = [];
+        for (let i = 1; i < options.length; i++) {
+            if (document.getElementById(`sequence_${i}`).value !== 'select') {
+                sequence.push(document.getElementById(`sequence_${i}`).value)
+            }
+        }
+        return sequence.join("-")
+    }
     const handleSaveDefaults = async () => {
         const response = await saveConfiguration({
             modelName: model,
@@ -70,7 +86,7 @@ export const Configs = ({ isUserAllowed }) => {
             month,
             batch,
             copies,
-            sequence: [model, year, serialNumber, month].join("")
+            sequence: generateSequence()
         });
         if (response.status !== 'OK') {
             const error = ["Error saving configs"]
@@ -112,8 +128,9 @@ export const Configs = ({ isUserAllowed }) => {
                 <div className="col">
                     Serial Number
                 </div>
-                <div className="col">
+                <div className="col d-flex">
                     <input value={serialNumber} name="serial-number" onChange={handleChange} type="text" id="serial-number" />
+                    &nbsp; <div onClick={() => setSerialNumber("000001")}>Reset</div>
                 </div>
                 <div className="w-100"></div>
                 <br />
@@ -140,6 +157,28 @@ export const Configs = ({ isUserAllowed }) => {
                 </div>
                 <div className="col">
                     <input value={copies} name="copies" onChange={handleChange} type="text" id="copies" />
+                </div>
+                <div className="w-100"></div>
+                <br />
+                <div className="col">
+                    Create your sequence
+                </div>
+                <div className="col">
+                    <select id="sequence_1" name="sequence_1">
+                        {options.map((option) => <option value={option}>{option}</option>)}
+                    </select> &nbsp;
+                    <select id="sequence_2" name="sequence_2">
+                        {options.map((option) => <option value={option}>{option}</option>)}
+                    </select> &nbsp;
+                    <select id="sequence_3" name="sequence_3">
+                        {options.map((option) => <option value={option}>{option}</option>)}
+                    </select> &nbsp;
+                    <select id="sequence_4" name="sequence_4">
+                        {options.map((option) => <option value={option}>{option}</option>)}
+                    </select> &nbsp;
+                    <select id="sequence_5" name="sequence_5">
+                        {options.map((option) => <option value={option}>{option}</option>)}
+                    </select>
                 </div>
                 <div className="w-100"></div>
                 <br />

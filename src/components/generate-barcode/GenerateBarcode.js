@@ -60,16 +60,28 @@ export const GenerateBarcode = ({ isUserAllowed }) => {
         }
     }
 
+    const getSequence = (index) => {
+        const sequenceItems = configs.sequence.split("-");
+        const sequence = [];
+        sequenceItems.map((item) => {
+            if (item === 'serialNumber') {
+                sequence.push((+configs[item] + index))
+                return;
+            }
+            sequence.push(configs[item])
+        })
+        return sequence.join("");
+    }
     const handleGenerate = () => {
         setDownload(true);
         let counter = 0;
         for (let i = 0; i <= (serialFinal - serialInitial + 1); i++) {
-            const number = configs?.modelName + configs?.year + parseInt(+serialInitial + i, 10) + configs?.month
+            const number = getSequence(i); // configs?.modelName + configs?.year + parseInt(+serialInitial + i, 10) + configs?.month
             for (let j = 1; j <= configs?.copies; j++) {
                 const barcode = `#barcode_${counter}`;
                 JsBarcode(barcode,
                     number, {
-                    text: `${number}_${j}`,
+                    text: `${j}      ${number}`,
                     width: 2,
                     height: 50,
                     fontSize: 15,
