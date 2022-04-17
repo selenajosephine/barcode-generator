@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import JsBarcode from 'jsbarcode';
 import JSZip from 'jszip';
 import FileSaver from 'file-saver';
-import { getConfigurationService } from '../../services/ConfigurationService';
+import { getConfigurationService, saveConfiguration } from '../../services/ConfigurationService';
 import { useNavigate } from 'react-router-dom';
 
 const zip = new JSZip();
@@ -11,15 +11,8 @@ export const GenerateBarcode = ({ isUserAllowed }) => {
     const [configs, setConfigs] = useState({});
     const [serialInitial, setSerialInitial] = useState();
     const [serialFinal, setSerialFinal] = useState();
-    const [copyCount, setCopyCount] = useState(1);
     const [finalArray, setArrayCount] = useState(Array(20).fill("**"));
     const [isDownload, setDownload] = useState(false);
-    const [sequence, setSequence] = useState("000000000");
-    // const [serialInitial, setSerialInitial] = useState(configs?.serialNumber || 1);
-    // const [serialFinal, setSerialFinal] = useState(+(configs?.serialNumber || 1) + +19);
-    // const [copyCount, setCopyCount] = useState(1);
-    // const [finalArray, setArrayCount] = useState(Array(20).fill("**"));
-    // const [isDownload, setDownload] = useState(false)
     const [errorMessage, setErrorMessage] = useState([]);
     const navigate = useNavigate();
 
@@ -27,13 +20,7 @@ export const GenerateBarcode = ({ isUserAllowed }) => {
         setConfigs(configs);
         setSerialInitial(configs.serialNumber);
         setSerialFinal(+configs.serialNumber + 19);
-        // setBatch(configs.batch);
-        // setCopies(configs.copies);
-        // setModel(configs.modelName);
-        // setMonth(configs.month);
-        // setYear(configs.year);
-        // setSerialInitial(configs.serialNumber);
-        setSequence(configs.sequence);
+        setArrayCount(Array(20 * (+configs.copies)).fill("**"));
     }
 
     useEffect(async () => {
@@ -59,9 +46,6 @@ export const GenerateBarcode = ({ isUserAllowed }) => {
             case 'serial-final':
                 setSerialFinal(value);
                 break;
-            case 'copy-count':
-                setCopyCount(value);
-                break;
             default:
                 break;
         }
@@ -71,43 +55,46 @@ export const GenerateBarcode = ({ isUserAllowed }) => {
         const { value } = e.target;
         if (value > serialInitial) {
             const count = value - serialInitial + 1
-            const ele = Array(count).fill("**")
+            const ele = Array(count * (+configs.copies)).fill("**")
             setArrayCount(ele);
         }
     }
 
     const handleGenerate = () => {
-        const seq = sequence;
         setDownload(true);
-        const count = serialFinal - serialInitial + 1;
-        // var number = String(seq) + serialInitial;
-        for (let i = 0; i <= count; i++) {
-            const barcode = `#barcode_${i}`;
-            const number = configs?.model + configs?.year + parseInt(+serialInitial + i, 10) + configs?.month + configs?.productHead
-            JsBarcode(barcode,
-                number, {
-                text: number,
-                width: 2,
-                height: 50,
-                fontSize: 15,
-            });
+        let counter = 0;
+        for (let i = 0; i <= (serialFinal - serialInitial + 1); i++) {
+            const number = configs?.modelName + configs?.year + parseInt(+serialInitial + i, 10) + configs?.month
+            for (let j = 1; j <= configs?.copies; j++) {
+                const barcode = `#barcode_${counter}`;
+                JsBarcode(barcode,
+                    number, {
+                    text: `${number}_${j}`,
+                    width: 2,
+                    height: 50,
+                    fontSize: 15,
+                });
+                counter++;
+            }
         }
     }
 
     const handleDownload = () => {
-        const con = { ...configs, serialNumber: serialFinal + 1 }
-        localStorage.setItem('sels-barcode', JSON.stringify(con));
-        finalArray.forEach((val, index) => {
-            const element = document.getElementById(`barcode_${index}`);
-            if (element) {
+        let counter = 0;
+        for (let i = 0; i < (serialFinal - serialInitial + 1); i++) {
+            var img = zip.folder(`barcode_${(+serialInitial + i)}`);
+            for (let j = 1; j <= configs?.copies; j++) {
+                const element = document.getElementById(`barcode_${counter}`);
                 const imgUri = element.toDataURL().split(';base64,')[1];
-                var img = zip.folder(`barcode_${index}`);
-                for (let i = 1; i <= copyCount; i++) {
-                    img.file(`${i}.png`, imgUri, { base64: true });
-                }
+                img.file(`${j}.png`, imgUri, { base64: true });
+                counter++;
             }
-        })
+        }
         zip.generateAsync({ type: 'blob' }).then((content) => { FileSaver.saveAs(content, `barcode_${serialInitial}_${serialFinal}`); })
+        saveConfiguration({
+            ...configs,
+            serialNumber: `${+serialFinal + 1}`
+        });
     }
 
     return (
@@ -122,7 +109,7 @@ export const GenerateBarcode = ({ isUserAllowed }) => {
                     </div>
                 </div>
             )}
-            <div className="p-3 blue-font">Current Sequence is {sequence}</div>
+            <div className="p-3 blue-font">Current Sequence is {configs?.sequence || "00000000"}</div>
             <div className="p-3 w-100 row">
                 <div className="col">
                     Barcode first serial number
@@ -140,14 +127,6 @@ export const GenerateBarcode = ({ isUserAllowed }) => {
                 </div>
                 <div className="w-100"></div>
                 <br />
-                <div className="col">
-                    How many copies do you want?
-                    </div>
-                <div className="col">
-                    <input value={copyCount} name="copy-count" onChange={handleChange} type="number" id="copy-count" />
-                </div>
-                <div className="w-100"></div>
-                <br />
             </div>
             <div>
                 <div className="p-3 justify-content-center d-flex">
@@ -161,7 +140,9 @@ export const GenerateBarcode = ({ isUserAllowed }) => {
                     )
                 }
             </div>
-            {finalArray.map((val, i) => (<canvas id={`barcode_${i}`}></canvas>))}
+            <div>
+                {finalArray.map((val, i) => (<canvas id={`barcode_${i}`}></canvas>))}
+            </div>
         </>
     )
 }
