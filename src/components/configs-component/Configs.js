@@ -91,6 +91,8 @@ export const Configs = ({ isUserAllowed }) => {
         if (response.status !== 'OK') {
             const error = ["Error saving configs"]
             setErrorMessage(error)
+        } else {
+            navigate("/")
         }
     }
 

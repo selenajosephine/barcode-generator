@@ -1,5 +1,5 @@
 import axios from 'axios';
-axios.defaults.baseURL = 'http://localhost:8080/api'
+axios.defaults.baseURL = 'https://barcodes-generator.herokuapp.com/api'
 
 export const loginUser = (credentials) => {
     return axios.post('/auth/signin', credentials)

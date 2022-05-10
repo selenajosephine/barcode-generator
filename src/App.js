@@ -19,10 +19,12 @@ export const App = () => {
       </div>
     );
   }
-console.log(user);
+  console.log(user);
   return (
     <div className="d-flex flex-column min-vh-100">
-      <Header />
+      <span className="no-print">
+        <Header />
+      </span>
       <BrowserRouter>
         <Routes>
           <Route exact path='/' element={<LandingPage user={user} />} key={1} id={1} />
@@ -31,7 +33,9 @@ console.log(user);
           <Route exact path='/moderate/generate' element={<GenerateBarcode isUserAllowed={checkEligibility(user.roles, 'moderator')} />} key={2} id={2} />
         </Routes>
       </BrowserRouter>
-      <Footer />
+      <span className="no-print">
+        <Footer />
+      </span>
     </div>
   );
 }

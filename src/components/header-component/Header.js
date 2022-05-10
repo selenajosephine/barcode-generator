@@ -8,7 +8,7 @@ export const Header = ({ title = "Package Management" }) => {
         window.location.reload()
     }
     return (
-        <div className="blue-background text-white p-3 font-30-px d-flex flex-row justify-content-between">
+        <div className="blue-background text-white p-3 font-30-px d-flex flex-row justify-content-between no-print">
             <div onClick={() => window.location.replace('/')}>{title}</div>
             {isUserLoggedIn() && <div className="" onClick={logout}>Logout</div>}
         </div>
