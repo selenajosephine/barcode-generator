@@ -92,11 +92,11 @@ export const GenerateBarcode = ({ isUserAllowed }) => {
                     number, {
                     text: `${j} ${number}`,
                     width: 2,
-                    height: 60,
-                    fontSize: 40,
+                    height: 80,
+                    fontSize: 45,
                     displayValue: true,
-                    marginBottom: 25,
-                    marginTop: 25
+                    marginBottom: 20,
+                    marginTop: 20
                 });
                 counter++;
             }
