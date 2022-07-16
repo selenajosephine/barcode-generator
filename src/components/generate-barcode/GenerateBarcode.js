@@ -91,9 +91,9 @@ export const GenerateBarcode = ({ isUserAllowed }) => {
                 JsBarcode(barcode,
                     number, {
                     text: `${j} ${number}`,
-                    width: 2,
-                    height: 80,
-                    fontSize: 45,
+                    width: 4,
+                    height: 60,
+                    fontSize: 48,
                     displayValue: true,
                     marginBottom: 20,
                     marginTop: 20
