@@ -16,11 +16,25 @@ const pageOptions = [
         label: 'Generate Barcode'
     },
     {
+        id: 'barcode_unique_generator_page',
+        key: 3,
+        route: 'generate/unique',
+        allowedFor: ['ROLE_ADMIN'],
+        label: 'Generate Unique Barcode'
+    },
+    {
         id: 'barcode_generator_mod_page',
-        key: 2,
+        key: 4,
         route: 'moderate/generate',
         allowedFor: ['ROLE_MODERATOR'],
         label: 'Generate Barcode'
+    },
+    {
+        id: 'barcode_unique_generator_mod_page',
+        key: 5,
+        route: 'moderate/generate/unique',
+        allowedFor: ['ROLE_MODERATOR'],
+        label: 'Generate Unique Barcode'
     }
 ];
 

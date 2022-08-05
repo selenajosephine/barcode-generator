@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './App.css';
-import { Header, Footer, LoginComponent, Configs, GenerateBarcode } from './components';
+import { Header, Footer, LoginComponent, Configs, GenerateBarcode, GenerateUniqueBarcode } from './components';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { checkEligibility, getUserInSession } from './utils/UserUtils';
 import { LandingPage } from './components';
@@ -29,8 +29,11 @@ export const App = () => {
         <Routes>
           <Route exact path='/' element={<LandingPage user={user} />} key={1} id={1} />
           <Route exact path='/configs' element={<Configs isUserAllowed={checkEligibility(user.roles, 'admin')} />} key={2} id={2} />
-          <Route exact path='/generate' element={<GenerateBarcode isUserAllowed={checkEligibility(user.roles, 'admin')} />} key={2} id={2} />
-          <Route exact path='/moderate/generate' element={<GenerateBarcode isUserAllowed={checkEligibility(user.roles, 'moderator')} />} key={2} id={2} />
+          <Route exact path='/generate' element={<GenerateBarcode isUserAllowed={checkEligibility(user.roles, 'admin')} />} key={3} id={3} />
+          <Route exact path='/generate/unique' element={<GenerateUniqueBarcode isUserAllowed={checkEligibility(user.roles, 'admin')} />} key={5} id={5} />
+          <Route exact path='/moderate/generate' element={<GenerateBarcode isUserAllowed={checkEligibility(user.roles, 'moderator')} />} key={4} id={4} />
+          <Route exact path='/moderate/unique' element={<GenerateUniqueBarcode isUserAllowed={checkEligibility(user.roles, 'moderator')} />} key={4} id={4} />
+         
         </Routes>
       </BrowserRouter>
       <span className="no-print">
