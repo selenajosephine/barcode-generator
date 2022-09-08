@@ -25,7 +25,7 @@ export const GenerateUniqueBarcode = () => {
             const barcode = `#barcode_${j}`;
             if (isUpc) {
                 JsBarcode(barcode, code, {
-                    format: 'UPC',
+                    format: 'EAN13',
                     text: code,
                     width: 3,
                     height: 62,
@@ -98,7 +98,7 @@ export const GenerateUniqueBarcode = () => {
                     </div>
                     <div className="col">
                         <input type="checkbox" onChange={(e) => { setUpc(!isUpc) }} checked={isUpc} />
-                        &nbsp; Is UPC?
+                        &nbsp; Is EAN?
                     </div>
                     <div className="w-100"></div>
                     <br />
