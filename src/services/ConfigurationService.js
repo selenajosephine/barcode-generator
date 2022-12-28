@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { getToken } from '../utils/UserUtils';
-axios.defaults.baseURL = 'https://barcodes-generator.herokuapp.com/api'
+axios.defaults.baseURL = "https://barcode-generator-production.up.railway.app/api"
 
 export const getConfigurationService = () => {
     return axios.get('/configuration', {

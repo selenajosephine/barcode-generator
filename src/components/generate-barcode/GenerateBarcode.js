@@ -90,10 +90,10 @@ export const GenerateBarcode = ({ isUserAllowed }) => {
                 const barcode = `#barcode_${counter}`;
                 JsBarcode(barcode,
                     number, {
-                    text: `${j} ${number}`,
-                    width: 4,
+                    text: `${j} SN ${number}`,
+                    width: 3,
                     height: 60,
-                    fontSize: 48,
+                    fontSize: 50,
                     displayValue: true,
                     marginBottom: 20,
                     marginTop: 20

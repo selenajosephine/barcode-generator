@@ -27,9 +27,9 @@ export const GenerateUniqueBarcode = () => {
                 JsBarcode(barcode, code, {
                     format: 'EAN13',
                     text: code,
-                    width: 3,
+                    width: 4,
                     height: 62,
-                    fontSize: 40,
+                    fontSize: 48,
                     displayValue: true,
                     marginBottom: 20,
                     marginTop: 20
